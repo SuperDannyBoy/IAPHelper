@@ -15,7 +15,7 @@
 #endif
 
 
-@interface IAPHelper()
+@interface IAPHelper ()
 
 @property (nonatomic,copy) IAPBuyProductCompleteResponseBlock buyProductCompleteBlock;
 @property (nonatomic,copy) IAPProductsResponseBlock requestProductsBlock;
@@ -94,8 +94,45 @@
 }
 
 #pragma mark - handle
+#pragma mark 持久化订单信息
 - (void)recordTransaction:(SKPaymentTransaction *)transaction {    
-    // TODO: Record the transaction on the server side...    
+    // TODO: Record the transaction on the server side...
+    NSDictionary *dic = [JNKeychain loadValueForKey:kIAPKeychain];
+    NSMutableDictionary *orderDic = [NSMutableDictionary dictionaryWithDictionary:dic];
+    //如果收到的苹果交易单号为空，则结束该交易队列
+    if (transaction.transactionIdentifier.length == 0) {
+        if ([SKPaymentQueue defaultQueue]) {
+            [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+        }
+    } else {
+        /*
+         业务逻辑：
+         1、如果钥匙串匹配到存在该笔单号 -> 服务器校验
+         2、如果不存在该笔单号 -> 判断self.orderNO是否有，有则存到钥匙串中，无则丢单处理
+         */
+        NSString *orderNO = orderDic[transaction.transactionIdentifier];
+        if (orderNO.length) {
+            self.orderNO = orderNO;
+            if (_buyProductCompleteBlock) {
+                _buyProductCompleteBlock(transaction);
+            }
+        } else {
+            if (self.orderNO.length) {
+                //将苹果交易单号跟自己服务器单号绑定并存入钥匙串中
+                [orderDic setObject:self.orderNO forKey:transaction.transactionIdentifier];
+                [JNKeychain saveValue:orderDic forKey:kIAPKeychain];
+                if (_buyProductCompleteBlock) {
+                    _buyProductCompleteBlock(transaction);
+                }
+            } else {
+                //结束该交易队列
+                if ([SKPaymentQueue defaultQueue]) {
+                    [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+                }
+                NSLog(@"丢单了...需要用户联系客服提供苹果账号及交易单号进行核对订单");
+            }
+        }
+    }
 }
 
 - (void)provideContentWithTransaction:(SKPaymentTransaction *)transaction {
@@ -145,48 +182,42 @@
     return @"";
 }
 
-#pragma mark 交易完成，进行后续处理
+#pragma mark 交易成功
 - (void)completeTransaction:(SKPaymentTransaction *)transaction {
-    NSLog(@"-----交易完成，进行后续处理--------");
-    [self recordTransaction: transaction];
+    NSLog(@"交易成功...");
+    // 持久化订单信息
+    [self recordTransaction:transaction];
     
-    if ([SKPaymentQueue defaultQueue]) {
-        [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
-    }
-    
-    if (_buyProductCompleteBlock) {
-        _buyProductCompleteBlock(transaction);
-    }
+//    if ([SKPaymentQueue defaultQueue]) {
+//        [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+//    }
 }
 
-#pragma mark 已经购买过该商品，进行后续处理
+#pragma mark 已经购买过该商品
 - (void)restoreTransaction:(SKPaymentTransaction *)transaction {
-    NSLog(@"-----已经购买过该商品，进行后续处理--------");
-    [self recordTransaction: transaction];
+    NSLog(@"已经购买过该商品...");
     [self provideContentWithTransaction:transaction];
-    
-    if ([SKPaymentQueue defaultQueue]) {
-        [[SKPaymentQueue defaultQueue] finishTransaction: transaction];
-
+//    if ([SKPaymentQueue defaultQueue]) {
+//        [[SKPaymentQueue defaultQueue] finishTransaction: transaction];
+//
         if (_buyProductCompleteBlock) {
             _buyProductCompleteBlock(transaction);
         }
-    }
+//    }
 }
 
-#pragma mark 交易失败，进行后续处理
+#pragma mark 交易失败
 - (void)failedTransaction:(SKPaymentTransaction *)transaction {
-    NSLog(@"-----交易失败，进行后续处理--------");
+    NSLog(@"交易失败...");
     if (transaction.error.code != SKErrorPaymentCancelled) {
         NSLog(@"Transaction error: %@ %ld", transaction.error.localizedDescription,(long)transaction.error.code);
     }
-
-    if ([SKPaymentQueue defaultQueue]) {
-        [[SKPaymentQueue defaultQueue] finishTransaction: transaction];
+//    if ([SKPaymentQueue defaultQueue]) {
+//        [[SKPaymentQueue defaultQueue] finishTransaction: transaction];
         if (_buyProductCompleteBlock) {
             _buyProductCompleteBlock(transaction);
         }
-    }
+//    }
 }
 
 #pragma mark - 购买产品
@@ -231,7 +262,7 @@
 
 #pragma mark 弹出错误信息
 - (void)request:(SKRequest *)request didFailWithError:(NSError *)error {
-    NSLog(@"-------弹出错误信息----------");
+    NSLog(@"弹出错误信息...");
     self.requestProductsBlock(self.request, nil, error);
     self.requestProductsBlock = nil;
 }
@@ -242,12 +273,15 @@
     for (SKPaymentTransaction *transaction in transactions) {
         switch (transaction.transactionState) {
             case SKPaymentTransactionStatePurchased:
+                //交易成功
                 [self completeTransaction:transaction];
                 break;
             case SKPaymentTransactionStateFailed:
+                //交易失败
                 [self failedTransaction:transaction];
                 break;
             case SKPaymentTransactionStateRestored:
+                //已购买过该商品
                 [self restoreTransaction:transaction];
             default:
                 break;
@@ -268,7 +302,7 @@
     for (SKPaymentTransaction *transaction in queue.transactions) {
         switch (transaction.transactionState) {
             case SKPaymentTransactionStateRestored: {
-                [self recordTransaction: transaction];
+                [self recordTransaction:transaction];
                 [self provideContentWithTransaction:transaction];
             }
             default:

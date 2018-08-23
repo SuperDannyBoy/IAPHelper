@@ -17,6 +17,7 @@
 		DF166DEF212BEB7000F01ADD /* NSString+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = DF166DE7212BEB6F00F01ADD /* NSString+Base64.m */; };
 		DF166DF0212BEB7000F01ADD /* SFHFKeychainUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = DF166DE8212BEB6F00F01ADD /* SFHFKeychainUtils.m */; };
 		DF166DF1212BEB7000F01ADD /* IAPShare.m in Sources */ = {isa = PBXBuildFile; fileRef = DF166DED212BEB6F00F01ADD /* IAPShare.m */; };
+		DFC86817212E60D500C005C7 /* JNKeychain.m in Sources */ = {isa = PBXBuildFile; fileRef = DFC86815212E60D500C005C7 /* JNKeychain.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,6 +39,8 @@
 		DF166DEB212BEB6F00F01ADD /* NSString+Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Base64.h"; sourceTree = "<group>"; };
 		DF166DEC212BEB6F00F01ADD /* IAPHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IAPHelper.h; sourceTree = "<group>"; };
 		DF166DED212BEB6F00F01ADD /* IAPShare.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IAPShare.m; sourceTree = "<group>"; };
+		DFC86815212E60D500C005C7 /* JNKeychain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JNKeychain.m; path = ../../JNKeychain.m; sourceTree = "<group>"; };
+		DFC86816212E60D500C005C7 /* JNKeychain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JNKeychain.h; path = ../../JNKeychain.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,6 +73,8 @@
 		DF166DCE212BEB1400F01ADD /* IAPDemo */ = {
 			isa = PBXGroup;
 			children = (
+				DFC86816212E60D500C005C7 /* JNKeychain.h */,
+				DFC86815212E60D500C005C7 /* JNKeychain.m */,
 				DF166DE5212BEB6F00F01ADD /* IAPHelper */,
 				DF166DCF212BEB1400F01ADD /* AppDelegate.h */,
 				DF166DD0212BEB1400F01ADD /* AppDelegate.m */,
@@ -173,6 +178,7 @@
 				DF166DEE212BEB7000F01ADD /* IAPHelper.m in Sources */,
 				DF166DD4212BEB1400F01ADD /* ViewController.m in Sources */,
 				DF166DF0212BEB7000F01ADD /* SFHFKeychainUtils.m in Sources */,
+				DFC86817212E60D500C005C7 /* JNKeychain.m in Sources */,
 				DF166DF1212BEB7000F01ADD /* IAPShare.m in Sources */,
 				DF166DDF212BEB1500F01ADD /* main.m in Sources */,
 				DF166DD1212BEB1400F01ADD /* AppDelegate.m in Sources */,
@@ -319,6 +325,7 @@
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = IAPDemo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -337,6 +344,7 @@
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = IAPDemo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

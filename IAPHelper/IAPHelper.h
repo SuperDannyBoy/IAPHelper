@@ -8,7 +8,9 @@
 
 #import <Foundation/Foundation.h>
 #import "StoreKit/StoreKit.h"
+#import "JNKeychain.h"
 
+#define kIAPKeychain @"com.apple.iap.Keychain"
 
 typedef void (^IAPProductsResponseBlock)(SKProductsRequest* request , SKProductsResponse* response, NSError *error);
 
@@ -24,6 +26,9 @@ typedef void (^resoreProductsCompleteResponseBlock) (SKPaymentQueue* payment,NSE
 @property (nonatomic,strong) NSArray * products;
 @property (nonatomic,strong) NSMutableSet *purchasedProducts;
 @property (nonatomic,strong) SKProductsRequest *request;
+///自己服务器生成的订单号
+@property (nonatomic, copy) NSString *orderNO;
+
 ///是否是生产环境，如果校验步骤在服务器时，可不用设置改属性
 @property (nonatomic) BOOL production;
 
