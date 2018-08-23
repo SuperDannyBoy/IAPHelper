@@ -1,3 +1,9 @@
+## 说明
+
+本分支是在原作者的基础上完善丢单业务逻辑，并增加Demo。实际使用情况以Demo为准。
+
+## 介绍
+
 IAP helper for Apple in app purchases. It uses ARC and blocks for ease of use. Ready to use with newsstand subscriptions.
 
 ##Require
@@ -190,3 +196,5 @@ if(![IAPShare sharedHelper].iap) {
        }
 }];
 ```
+
+
