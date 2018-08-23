@@ -13,5 +13,5 @@ Pod::Spec.new do |s|
   s.source_files = "IAPHelper/*.{h,m}"
   s.public_header_files = "IAPHelper/*.h"
   s.framework  = 'StoreKit'
-  s.dependency = 'JNKeychain'
+  s.dependency 'JNKeychain'
 end
